@@ -4,3 +4,4 @@ aiosmtplib
 python-dotenv
 uvicorn
 email-validator
+python-multipart

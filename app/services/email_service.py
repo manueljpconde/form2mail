@@ -14,25 +14,37 @@ SMTP_PORT = int(os.getenv("SMTP_PORT"))
 EMAIL_SENDER = os.getenv("EMAIL_SENDER")
 EMAIL_RECEIVER = os.getenv("EMAIL_RECEIVER")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+REPLY_TO_EMAIL = os.getenv("REPLY_TO_EMAIL")
 
-async def send_email(contact_form: ContactForm):
+async def send_email(contact_form: ContactForm, file=None):
     """Sends an email with the contact form information"""
 
     email_message = EmailMessage()
     email_message["From"] = f"Contact Form <{EMAIL_SENDER}>"
     email_message["To"] = EMAIL_RECEIVER  # You can change this to a different recipient if needed
-    email_message["Reply-To"] = contact_form.email
+    email_message["Reply-To"] = REPLY_TO_EMAIL or contact_form.email
     email_message["Subject"] = f"Contact form: {contact_form.subject}"
 
     email_body = (
         "Email sent from Website Contact Form\n"
         f"Contact Name: {contact_form.name}\n"
-        f"Contact Phone: {contact_form.phone}\n"
-        f"Contact Email: {contact_form.email}\n\n"
+        f"Contact Phone: {contact_form.phone or 'Not provided'}\n"
+        f"Contact Email: {contact_form.email}\n"
+        f"Consent Timestamp: {contact_form.consent_ts or 'Not provided'}\n\n"
         f"Message:\n{contact_form.message}"
     )
 
     email_message.set_content(email_body)
+
+    # Add attachment if provided
+    if file:
+        content = await file.read()
+        email_message.add_attachment(
+            content,
+            maintype='application',
+            subtype='octet-stream',
+            filename=file.filename
+        )
 
     try:
         # Send the email using aiosmtplib with SSL (for port 465)

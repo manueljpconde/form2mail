@@ -35,14 +35,14 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         body = await request.json()
     except Exception:
         body = await request.body()
-        body = body.decode('utf-8')
+        body = body.decode('utf-8', errors='ignore')
     
     logging.error(f"Validation error for request body: {body}")
     logging.error(f"Validation errors: {exc.errors()}")
     
     return JSONResponse(
-        status_code=422,
-        content={"detail": exc.errors()},
+        status_code=200,
+        content={"error": "Validation Error", "message": "Invalid input data provided"},
     )
 # Include the contact form routes
 app.include_router(contact.router)
