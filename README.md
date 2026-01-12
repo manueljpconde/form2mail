@@ -194,6 +194,19 @@ fetch('http://localhost:3081/send-email/', {
   }
   ```
 
+#### Example API Request Using cURL with Form Data and Attachment
+
+```bash
+curl -X POST http://localhost:3081/send-email/ \
+  -H 'x-api-key: your-api-key' \
+  -F 'name=John Doe' \
+  -F 'email=john.doe@example.com' \
+  -F 'subject=Test with attachment' \
+  -F 'message=This is a test message.' \
+  -F 'consent_ts=2023-10-01T12:00:00Z' \
+  -F 'file=@./file.pdf'
+```
+
 ### Response Format
 
 - **Success Response (Status Code: 200)**
